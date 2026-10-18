@@ -324,3 +324,44 @@ footer {
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* =========================
+   HOST CONSOLE EXTRAS (server-backed)
+========================= */
+#auction .form-msg { text-align: left; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+#bidding-form .btn-row { justify-content: center; }
+.auction-controls { justify-content: center; margin-top: 14px; }
+
+.player-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+.player-card.current {
+  outline: 2px solid #2563eb;
+  background: #eef2ff;
+}
+.player-card button { width: auto; align-self: stretch; }
+.team-card.archived { opacity: 0.6; }
+.team-card button:disabled { background: #9ca3af; cursor: not-allowed; }
+
+.subheading { margin-top: 16px; font-size: 15px; }
+.chip-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+
+#auction-status { font-size: 13px; }
+
+@media (max-width: 980px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "auction"
+      "teams"
+      "players"
+      "results";
+    padding: 12px;
+  }
+  #teams-list, #players-list { max-height: 320px; }
+}

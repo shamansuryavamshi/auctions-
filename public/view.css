@@ -1,0 +1,98 @@
+/* Participant view layout */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  padding: 18px 16px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+header h1 { font-size: 26px; font-weight: 600; }
+
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  grid-template-areas:
+    "lot teams"
+    "bids sales";
+  gap: 20px;
+  align-content: start;
+}
+
+section {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+section h2 { font-size: 17px; margin-bottom: 12px; }
+
+#lot { grid-area: lot; }
+#teams { grid-area: teams; }
+#bids { grid-area: bids; }
+#sales { grid-area: sales; }
+
+#lot { text-align: center; }
+#lot img {
+  display: block;
+  margin: 0 auto 12px;
+  border-radius: 10px;
+  max-height: 240px;
+}
+#lot h3 { font-size: 22px; margin-bottom: 6px; }
+#lot p { font-size: 14px; color: #4b5563; margin-bottom: 4px; }
+.bid-line { font-size: 16px !important; color: #1f2937 !important; }
+.bid-line strong { color: #2563eb; font-size: 20px; }
+
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+
+.team-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+.team-card h3 { font-size: 15px; margin-bottom: 4px; }
+.team-card p { font-size: 13px; color: #4b5563; }
+.team-card.archived { opacity: 0.55; }
+
+.bid-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 4px;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+.bid-row:last-child { border-bottom: none; }
+.bid-row strong { color: #2563eb; }
+
+footer {
+  text-align: center;
+  padding: 14px;
+  font-size: 13px;
+  color: #6b7280;
+}
+footer a { color: #2563eb; }
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-areas: "lot" "teams" "bids" "sales";
+    padding: 12px;
+  }
+}

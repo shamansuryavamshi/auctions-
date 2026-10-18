@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sports Auction — Live View</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="view.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Sports Auction League</h1>
+  <div class="header-bar">
+    <span id="auction-status" class="status-badge">connecting…</span>
+    <span class="hint">Participant view — read only</span>
+  </div>
+</header>
+
+<main>
+  <!-- CURRENT LOT -->
+  <section id="lot">
+    <h2>On the Block</h2>
+    <article id="current-player">
+      <img id="lot-image" src="" alt="Player Image" width="180">
+      <div id="lot-info">
+        <h3 id="lot-name">Waiting for auction…</h3>
+        <p>Category: <span id="lot-category">—</span></p>
+        <p>Base price: <span id="lot-base">—</span></p>
+        <p class="bid-line">Highest bid: <strong id="lot-bid">—</strong></p>
+        <p>Leading team: <span id="lot-team">—</span></p>
+      </div>
+    </article>
+    <p id="view-msg" class="form-msg" hidden></p>
+  </section>
+
+  <!-- TEAMS -->
+  <section id="teams">
+    <h2>Teams</h2>
+    <div id="teams-list" class="team-grid"><p class="empty">Loading…</p></div>
+  </section>
+
+  <!-- BID HISTORY -->
+  <section id="bids">
+    <h2>Recent Bids</h2>
+    <div id="bid-history"><p class="empty">No bids yet</p></div>
+  </section>
+
+  <!-- SALES -->
+  <section id="sales">
+    <h2>Sold Players</h2>
+    <div id="sales-list"><p class="empty">No sales yet</p></div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2026 Sports Auction Platform · <a href="index.html">Host</a></p>
+</footer>
+
+<script src="shared.js"></script>
+<script src="view.js"></script>
+</body>
+</html>

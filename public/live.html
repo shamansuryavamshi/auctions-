@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sports Auction — Live Console</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="live.css">
+</head>
+
+<body>
+
+<header>
+  <h1>Sports Auction League</h1>
+  <div class="header-bar">
+    <span id="auction-status" class="status-badge">connecting…</span>
+    <nav class="page-links">
+      <a href="index.html">Setup</a>
+      <a href="view.html">Participant view</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- TEAMS -->
+  <section id="teams">
+    <h2>Teams</h2>
+    <div id="teams-list"><p class="empty">Loading…</p></div>
+  </section>
+
+  <!-- LIVE AUCTION -->
+  <section id="auction">
+    <h2>Live Auction</h2>
+
+    <article id="current-player">
+      <img id="auction-player-image" src="" alt="Player Image" width="180">
+      <h3 id="auction-player-name">No Player</h3>
+      <p>Category: <span id="auction-player-category">—</span></p>
+      <p>Base price: ₹<span id="auction-player-base">0</span></p>
+      <p>Highest Bid: ₹<span id="highest-bid">0</span></p>
+      <p>Leading Team: <span id="leading-team">—</span></p>
+      <p class="hint" id="bid-hint"></p>
+    </article>
+
+    <p id="live-msg" class="form-msg" role="status" aria-live="polite"></p>
+
+    <form id="bidding-form">
+      <label>
+        Select Team:
+        <select id="team-select"></select>
+      </label>
+
+      <label>
+        Enter Bid:
+        <input type="number" id="bid-amount" min="1" step="1">
+      </label>
+
+      <div class="btn-row">
+        <button type="button" id="place-bid" class="btn btn-primary" disabled>Place Bid</button>
+        <button type="button" id="sell-player" class="btn btn-success" disabled>Sell Player</button>
+        <button type="button" id="unsold-player" class="btn btn-warn" disabled>Mark Unsold</button>
+      </div>
+    </form>
+
+    <div class="btn-row auction-controls">
+      <button type="button" id="pause-btn" class="btn" disabled>Pause</button>
+      <button type="button" id="end-auction-btn" class="btn btn-danger" disabled>End Auction</button>
+    </div>
+  </section>
+
+  <!-- PLAYERS POOL -->
+  <section id="players">
+    <h2>Players List</h2>
+    <div id="players-list"><p class="empty">Loading…</p></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <h2>Sold Players</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Category</th>
+            <th>Team</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="sold-players">
+          <tr><td colspan="4" class="empty">No sales yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h2 class="subheading">Unsold Players</h2>
+    <div id="unsold-players" class="chip-list"><span class="empty">None yet</span></div>
+  </section>
+
+  <!-- TEAM POPUP (team cards only) -->
+  <div id="info-popup" class="popup hidden">
+    <div class="popup-content">
+      <span id="close-popup" role="button" aria-label="Close" tabindex="0">×</span>
+      <h3 id="popup-title"></h3>
+      <p id="popup-subtitle" class="hint"></p>
+      <ul id="popup-list"></ul>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>© 2026 Sports Auction Platform</p>
+</footer>
+
+<script src="shared.js"></script>
+<script src="live.js"></script>
+</body>
+</html>

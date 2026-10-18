@@ -133,3 +133,69 @@ footer {
   font-size: 13px;
   color: #6b7280;
 }
+
+/* =========================
+   SETUP PAGE EXTRAS (server-backed)
+========================= */
+#main-sec section h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.review-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.review-main strong { font-size: 14px; }
+.review-meta { font-size: 12px; color: #6b7280; }
+
+.readiness {
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+}
+.readiness.ready { background: #f0fdf4; border-color: #86efac; color: #166534; }
+.readiness.not-ready { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+.readiness ul { margin: 6px 0 0 18px; }
+.readiness li { margin-bottom: 3px; }
+
+#readiness-section { gap: 10px; }
+
+.hint { color: #6b7280; font-size: 13px; }
+.page-links a { color: #2563eb; text-decoration: none; }
+.page-links a:hover { text-decoration: underline; }
+
+/* responsive */
+@media (max-width: 520px) {
+  #main-sec { margin: 0 10px 70px; padding: 20px; }
+  footer { position: static; text-align: center; padding: 14px; }
+}

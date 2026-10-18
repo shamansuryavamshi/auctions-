@@ -106,3 +106,29 @@ Findings are only listed where the source code supports them. Severity: P0 (data
 ## 5. Risk summary
 
 The application currently works only as a single-user, single-tab demo. The highest risks are money-related state (budgets, sales) living in mutable, index-addressed, browser-local data, and the absence of any server authority or validation. Phase 2 must establish authoritative server-side state before further UI work, or every UI fix will rest on an unreliable foundation.
+
+---
+
+## 6. Phase 2 remediation status (implemented)
+
+Schema documented in `DATA_MODEL.md`; run/test instructions in `README.md`.
+
+| Audit finding | Severity | Status |
+|---|---|---|
+| #1 localStorage-only state | P0 | **Fixed** — server-owned `data/auction.json`, clients render `GET /api/state` + SSE only |
+| #2 team removal corrupts index references | P0 | **Fixed** — stable IDs everywhere; regression suite `test/team-ids.test.js`; mid-auction removal archives |
+| #3 client-only rule enforcement | P0 | **Fixed** — all rules in `src/services/auction.js`, enforced per request server-side |
+| #4 sale not re-validated / double sale | P0 | **Fixed** — serialized atomic settlement; `test/sale.test.js` proves 1 sale / 1 deduction under concurrent requests |
+| #5 XSS via innerHTML | P0 | **Fixed** — DOM built with `textContent` (`Auction.el`), no interpolated HTML |
+| #6 `renderSoldPlayers()` init TypeError | P1 | **Fixed** — `#sold-players` restored as a real element; all DOM lookups guarded (`public/live.js`) |
+| #7 no base price / increment | P1 | **Fixed** — required fields + configurable increment, enforced server-side |
+| #8 no lifecycle status | P1 | **Fixed** — `setup ? live ? paused ? concluded` with server-enforced transitions |
+| #9 delete-only players (data loss) | P1 | **Fixed** — unsold workflow; sold players protected; destructive actions confirmed client-side |
+| #10 initial budget destroyed | P1 | **Fixed** — `initialBudget` + `remainingBudget` fields |
+| #11 no host/participant separation | P1 | **Fixed** — host token (env, rate-limited, never in responses) vs public read-only endpoints + `/view.html` |
+| #12 start with invalid setup | P1 | **Fixed** — readiness endpoint, review screen, start rejects incomplete setups |
+| #13 thin conclusion page | P1 | **Fixed** — totals, counts, spend, utilization, sold/unsold lists computed from records |
+| #14 player popup on card click | P1 | **Fixed** — only team cards open a popup; action buttons stop propagation |
+| #15-#23 (P2) | P2 | Partially fixed: relative asset paths, responsive breakpoints, consistent ? formatting, inline messages, shared `shared.css`; image size limit added |
+
+Remaining P2/P3 work (Phase 6 scope): deeper visual polish and further responsive refinement.

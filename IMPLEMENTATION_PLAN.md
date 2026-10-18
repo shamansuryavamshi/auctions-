@@ -112,3 +112,13 @@ State machine: `setup → ready → live ⇄ paused → concluded`.
 
 1. Phase 1 ✅ → 2.1-2.8 → 4.1-4.7 (core money logic) → 3.1-3.4 → 5.x → 6.x → 7.
    Phases 3 and 5 depend on Phase 2; Phase 6 depends only on markup stability, so it may be interleaved once Phase 5 lands.
+
+---
+
+## Phase 2 execution status � COMPLETE (2026-10-18)
+
+All Phase 2 tasks (2.1-2.8), core Phase 4 rules (4.1-4.7), Phase 3 auth (3.1, 3.4), Phase 5 interaction rules (5.1-5.3) and tests (Phase 7 core) implemented and verified: **59/59 automated tests pass** (`npm test`), end-to-end HTTP smoke test passed (setup ? start ? bid ? sell ? unsold ? conclude ? statistics, plus 401 on unauthenticated mutation).
+
+- Bidding is host-operated (auctioneer console); participants are read-only � documented in `README.md`.
+- Sale void/correction (task 4.8) and participant-side bidding (task 3.3) remain open as P2/P3 follow-ups.
+- Visual redesign (Phase 6) not started, per instructions.

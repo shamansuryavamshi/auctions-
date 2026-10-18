@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction Setup</title>
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <h1>Sports Auction League</h1>
+  <p class="page-subtitle">Host setup — configure teams, players and auction rules</p>
+
+  <main id="main-sec">
+
+    <p id="setup-msg" class="form-msg" role="status" aria-live="polite"></p>
+
+    <!-- AUCTION RULES -->
+    <section>
+      <h2>Auction rules</h2>
+      <label>
+        Bid increment (₹ per bid):
+        <input type="number" id="bid-increment" min="1" step="1" placeholder="e.g. 10">
+      </label>
+      <button type="button" id="save-config" class="btn">Save increment</button>
+    </section>
+
+    <!-- TEAM SETUP -->
+    <section>
+      <h2>Add team</h2>
+      <label>
+        Team name:
+        <input type="text" id="teamNameInput" placeholder="Team Name" maxlength="80">
+      </label>
+      <label>
+        Starting budget:
+        <input type="number" id="teambudgetinput" placeholder="Team Budget" min="1" step="1">
+      </label>
+      <button type="button" id="addteambdgt" class="btn">Add Team</button>
+
+      <h3 class="subheading">Teams (<span id="team-count">0</span>)</h3>
+      <div id="teams-review" class="review-list"></div>
+    </section>
+
+    <!-- PLAYER SETUP -->
+    <section>
+      <h2>Add player</h2>
+      <label>
+        Player name:
+        <input type="text" id="player-name" placeholder="Player Name" maxlength="80">
+      </label>
+      <label>
+        Category:
+        <select id="playerCategory">
+          <option value="">Select Category</option>
+          <option value="Batsman">Batsman</option>
+          <option value="Bowler">Bowler</option>
+          <option value="All-Rounder">All-Rounder</option>
+          <option value="Wicket-Keeper">Wicket Keeper</option>
+        </select>
+      </label>
+      <label>
+        Base price (₹):
+        <input type="number" id="playerBasePrice" min="0" step="1" placeholder="0">
+      </label>
+      <label class="file-label">
+        Player image:
+        <input type="file" id="playerImage" accept="image/*">
+      </label>
+      <button type="button" id="add-player" class="btn">Add Player</button>
+
+      <h3 class="subheading">Players (<span id="player-count">0</span>)</h3>
+      <div id="players-review" class="review-list"></div>
+    </section>
+
+    <!-- READINESS -->
+    <section id="readiness-section">
+      <h2>Start auction</h2>
+      <div id="readiness" class="readiness">Checking setup…</div>
+      <button type="button" id="review-btn" class="btn btn-success" disabled>Review &amp; Start Auction</button>
+      <p class="hint">Legacy data from the old version of this site?
+        <button type="button" id="legacy-import" class="btn-link" hidden>Import it now</button>
+      </p>
+    </section>
+
+    <nav class="page-links">
+      <a href="live.html">Live console</a>
+      <a href="view.html">Participant view</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+
+  </main>
+
+  <footer>
+    <p>© 2026 Sports Auction Platform</p>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
