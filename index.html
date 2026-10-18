@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction Setup</title>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+  <h1>Sports Auction League</h1>
+<main id="main-sec">
+
+  <!-- TEAM SETUP -->
+  <section>
+    <label>
+      Enter team name:
+      <input type="text" id="teamNameInput" placeholder="Team Name">
+    </label>
+
+    <label>
+      Enter team budget:
+      <input type="number" id="teambudgetinput" placeholder="Team Budget">
+    </label>
+
+    <button type="button" id="addteambdgt">Add Team</button>
+  </section>
+
+  <!-- PLAYER SETUP -->
+  <section>
+    <label>
+      Enter player name:
+      <input type="text" id="player-name" placeholder="Player Name">
+      <select id="playerCategory">
+        <option value="">Select Category</option>
+        <option value="Batsman">Batsman</option>
+        <option value="Bowler">Bowler</option>
+        <option value="All-Rounder">All-Rounder</option>
+        <option value="Wicket-Keeper">Wicket Keeper</option>
+      </select>
+
+      <input type="file" id="playerImage" accept="image/*">
+      <button type="button" id="add-player">Add Player</button>
+    </label>
+
+  </section>
+
+  <!-- AUCTION -->
+  <button type="button" id="live-auction">Start Live Auction</button>
+
+</main>
+
+<footer>
+  <p>© 2026 Sports Auction Platform</p>
+</footer>
+
+<script src="index.js"></script>
+</body>
+</html>

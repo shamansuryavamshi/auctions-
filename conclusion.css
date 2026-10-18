@@ -1,0 +1,89 @@
+/* RESET */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* BASE */
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+/* MAIN */
+main {
+  padding: 20px;
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+section h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+
+/* TEAM SUMMARY CARD */
+.team-summary {
+  background: #ffffff;
+  padding: 16px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.team-summary h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.team-summary ul {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.team-summary li {
+  margin-bottom: 6px;
+}
+
+/* UNSOLD PLAYERS */
+#unsold-players {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+.unsold-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.unsold-list li {
+  margin-bottom: 6px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 13px;
+  color: #6b7280;
+}

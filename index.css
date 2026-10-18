@@ -1,0 +1,135 @@
+/* =========================
+   RESET
+========================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================
+   BASE PAGE
+========================= */
+body {
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =========================
+   HEADING
+========================= */
+h1 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 30px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* =========================
+   MAIN CONTAINER (CENTERED)
+========================= */
+#main-sec {
+  background: #ffffff;
+  padding: 30px;
+  width: 100%;
+  max-width: 480px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* =========================
+   FORM SECTIONS
+========================= */
+#main-sec section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* =========================
+   LABELS
+========================= */
+label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* =========================
+   INPUTS & SELECT
+========================= */
+input,
+select {
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* =========================
+   FILE INPUT
+========================= */
+input[type="file"] {
+  border: none;
+  padding: 6px 0;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+button {
+  margin-top: 8px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+
+  transition: background 0.2s ease;
+}
+
+button:hover {
+  background: #1e40af;
+}
+
+/* =========================
+   START AUCTION BUTTON
+========================= */
+#live-auction {
+  background: #16a34a;
+}
+
+#live-auction:hover {
+  background: #15803d;
+}
+
+/* =========================
+   FOOTER (BOTTOM LEFT)
+========================= */
+footer {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  font-size: 13px;
+  color: #6b7280;
+}
