@@ -1,6 +1,7 @@
 /* Shared client: API access, host token handling, SSE, DOM helpers. */
 (function () {
   const TOKEN_KEY = 'auctionHostToken';
+  const PARTICIPANT_KEY = 'auctionParticipantToken';
 
   function getToken() {
     try { return sessionStorage.getItem(TOKEN_KEY) || ''; } catch { return ''; }
@@ -10,12 +11,27 @@
     try { sessionStorage.setItem(TOKEN_KEY, value); } catch { /* private mode */ }
   }
 
-  async function request(path, { method = 'GET', body, host = false } = {}) {
+  function getParticipantToken() {
+    try { return sessionStorage.getItem(PARTICIPANT_KEY) || ''; } catch { return ''; }
+  }
+
+  function setParticipantToken(value) {
+    try {
+      if (value) sessionStorage.setItem(PARTICIPANT_KEY, value);
+      else sessionStorage.removeItem(PARTICIPANT_KEY);
+    } catch { /* private mode */ }
+  }
+
+  async function request(path, { method = 'GET', body, host = false, participant = false } = {}) {
     const headers = { 'Accept': 'application/json' };
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     if (host) {
       const token = getToken();
       if (token) headers['x-host-token'] = token;
+    }
+    if (participant) {
+      const ptoken = getParticipantToken();
+      if (ptoken) headers['x-participant-token'] = ptoken;
     }
     let res;
     try {
@@ -32,7 +48,7 @@
       err.status = res.status;
       err.code = data && data.error && data.error.code;
       err.details = data && data.error && data.error.details;
-      if (res.status === 401) window.dispatchEvent(new CustomEvent('host-auth-required'));
+      if (res.status === 401 && host) window.dispatchEvent(new CustomEvent('host-auth-required'));
       throw err;
     }
     return data;
@@ -121,11 +137,14 @@
   window.addEventListener('host-auth-required', showHostModal);
 
   window.Auction = {
-    getToken, setToken, request, connect, el, money, clear, setStatus, messageOf,
+    getToken, setToken, getParticipantToken, setParticipantToken,
+    request, connect, el, money, clear, setStatus, messageOf,
     get: path => request(path),
     post: (path, body) => request(path, { method: 'POST', body, host: true }),
     patch: (path, body) => request(path, { method: 'PATCH', body, host: true }),
     del: path => request(path, { method: 'DELETE', host: true }),
+    participantPost: (path, body) => request(path, { method: 'POST', body, participant: true }),
+    participantGet: path => request(path, { participant: true }),
     requireHostToken: () => { if (!getToken()) showHostModal(); },
     isHost: () => Boolean(getToken()),
   };

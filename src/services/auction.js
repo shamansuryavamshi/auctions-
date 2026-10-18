@@ -1,5 +1,15 @@
+const crypto = require('crypto');
 const { badRequest, notFound, conflict } = require('../errors');
 const { uid, isoNow } = require('../store');
+
+// Sales that still count toward budgets/stats (corrected ones are audit-only).
+function activeSales(state) {
+  return state.sales.filter(s => s.status !== 'corrected');
+}
+
+function makeParticipantCode() {
+  return crypto.randomBytes(4).toString('hex');
+}
 
 const CATEGORIES = ['Batsman', 'Bowler', 'All-Rounder', 'Wicket-Keeper'];
 const MAX_EVENTS = 500;
@@ -79,6 +89,7 @@ function addTeam(state, input) {
     initialBudget,
     remainingBudget: initialBudget,
     status: 'active',
+    participantCode: makeParticipantCode(),
     createdAt: isoNow(),
     archivedAt: null,
   };
@@ -316,6 +327,7 @@ function requiredNextBid(state) {
 
 function placeBid(state, input) {
   assertAuctionStatus(state, ['live']);
+  const source = input.source === 'participant' ? 'participant' : 'host';
   const player = currentPlayer(state);
   if (!player || player.status !== 'in_progress') throw conflict('There is no player currently being auctioned');
 
@@ -334,11 +346,11 @@ function placeBid(state, input) {
     throw conflict(`${team.name} does not have enough remaining budget (₹${team.remainingBudget})`);
   }
 
-  const bid = { id: uid('bid'), playerId: player.id, teamId, amount, timestamp: isoNow() };
+  const bid = { id: uid('bid'), playerId: player.id, teamId, amount, timestamp: isoNow(), source };
   state.bids.push(bid);
   if (state.bids.length > MAX_BIDS) state.bids.splice(0, state.bids.length - MAX_BIDS);
   state.auction.currentBid = { bidId: bid.id, teamId, amount, timestamp: bid.timestamp };
-  addEvent(state, 'bid_placed', `${team.name} bid ${amount} for ${player.name}`, { playerId: player.id, teamId, amount });
+  addEvent(state, 'bid_placed', `${team.name} bid ${amount} for ${player.name}`, { playerId: player.id, teamId, amount, source });
   return bid;
 }
 
@@ -372,6 +384,7 @@ function confirmSale(state) {
     playerId: player.id,
     teamId: team.id,
     price: bid.amount,
+    status: 'active', // -> 'corrected' via the host correction workflow
     timestamp: isoNow(),
   };
   state.sales.push(sale);
@@ -379,6 +392,37 @@ function confirmSale(state) {
     playerId: player.id, teamId: team.id, price: bid.amount, saleId: sale.id,
   });
   advance(state);
+  return { sale, player, team };
+}
+
+// Host-only sale correction: atomic, exactly-once, fully audited.
+function correctSale(state, saleId) {
+  const sale = state.sales.find(s => s.id === saleId);
+  if (!sale) throw notFound('Sale not found');
+  if (sale.status === 'corrected') throw conflict('This sale has already been corrected');
+
+  const player = state.players.find(p => p.id === sale.playerId);
+  const team = state.teams.find(t => t.id === sale.teamId);
+  if (!player || player.status !== 'sold' || player.teamId !== sale.teamId || player.price !== sale.price) {
+    throw conflict('Sale cannot be corrected safely: the sale and player records disagree');
+  }
+  if (!team) throw conflict('Sale cannot be corrected safely: the winning team no longer exists');
+  if (!Number.isInteger(team.remainingBudget) || team.remainingBudget + sale.price > team.initialBudget) {
+    throw conflict('Sale cannot be corrected safely: restoring the budget would exceed the initial budget');
+  }
+
+  // --- single atomic correction ---
+  player.status = 'available';
+  player.teamId = null;
+  player.price = null;
+  player.resolvedAt = null;
+  team.remainingBudget += sale.price;
+  sale.status = 'corrected';
+  sale.correctedAt = isoNow();
+
+  addEvent(state, 'sale_corrected',
+    `Sale of ${player.name} to ${team.name} for ${sale.price} corrected; budget restored and player returned to the pool`,
+    { saleId: sale.id, playerId: player.id, teamId: team.id, price: sale.price });
   return { sale, player, team };
 }
 
@@ -402,9 +446,9 @@ function stats(state) {
   const unsold = state.players.filter(p => p.status === 'unsold');
   const inProgress = state.players.filter(p => p.status === 'in_progress');
   const available = state.players.filter(p => p.status === 'available');
-  const totalSpent = state.sales.reduce((sum, s) => sum + s.price, 0);
+  const totalSpent = activeSales(state).reduce((sum, s) => sum + s.price, 0);
   const teams = state.teams.map(t => {
-    const purchases = state.sales.filter(s => s.teamId === t.id);
+    const purchases = activeSales(state).filter(s => s.teamId === t.id);
     const spent = purchases.reduce((sum, s) => sum + s.price, 0);
     return {
       id: t.id,
@@ -426,6 +470,32 @@ function stats(state) {
     totalSpent,
     teams,
   };
+}
+
+// ---------- participant team codes ----------
+
+function ensureParticipantCodes(state) {
+  let created = 0;
+  for (const t of state.teams) {
+    if (t.status === 'active' && !t.participantCode) {
+      t.participantCode = makeParticipantCode();
+      created++;
+    }
+  }
+  if (created > 0) {
+    addEvent(state, 'participant_codes_created', `Generated ${created} participant team code(s)`);
+  }
+  return state.teams
+    .filter(t => t.status === 'active')
+    .map(t => ({ teamId: t.id, name: t.name, code: t.participantCode }));
+}
+
+function rotateParticipantCode(state, teamId) {
+  const team = getTeam(state, teamId);
+  if (team.status === 'archived') throw conflict('Archived teams do not accept participants');
+  team.participantCode = makeParticipantCode();
+  addEvent(state, 'participant_code_rotated', `Participant code rotated for ${team.name}`, { teamId });
+  return { teamId: team.id, name: team.name, code: team.participantCode };
 }
 
 // ---------- legacy migration ----------
@@ -473,7 +543,8 @@ module.exports = {
   addTeam, updateTeam, removeTeam,
   addPlayer, updatePlayer, removePlayer,
   readiness, setConfig, startAuction, pauseAuction, resumeAuction, concludeAuction, resetAuction,
-  placeBid, confirmSale, markUnsold,
-  requiredNextBid, stats, importLegacy,
+  placeBid, confirmSale, markUnsold, correctSale,
+  requiredNextBid, stats, importLegacy, activeSales,
+  ensureParticipantCodes, rotateParticipantCode,
   currentPlayer, getTeam, getPlayer, addEvent,
 };

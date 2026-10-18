@@ -122,3 +122,15 @@ All Phase 2 tasks (2.1-2.8), core Phase 4 rules (4.1-4.7), Phase 3 auth (3.1, 3.
 - Bidding is host-operated (auctioneer console); participants are read-only — documented in `README.md`.
 - Sale void/correction (task 4.8) and participant-side bidding (task 3.3) remain open as P2/P3 follow-ups.
 - Visual redesign (Phase 6) not started, per instructions.
+
+---
+
+## Phase 3 execution status - COMPLETE (2026-10-18)
+
+Phase 3 (participant identity + participant bidding, task 3.3) and Phase 4 task 4.8 (sale correction) implemented and verified: **84/84 automated tests pass** (
+pm test = 59 prior + 25 new in test/participant.test.js and test/correction.test.js).
+
+- Participant identity: server-issued sessions via POST /api/participants/session {code} (team codes, 8-hex, host-only visibility, brute-force rate limit); sessions are in-memory (restart invalidates - documented in README/DATA_MODEL).
+- Participant bidding: POST /api/participant/bids {amount} - team derived ONLY from the session server-side; spoofed teamId in the body is ignored; host and participant credentials are not interchangeable.
+- Sale correction: POST /api/sales/:id/correct {confirm:true} (host) - restores budget, returns player to the pool, marks the sale corrected (excluded from all derivations), audited via sale_corrected event, exactly-once under concurrency, works live/paused/concluded. Host console sold table has an Undo button.
+- Frontend: participant join/bid panel with inline feedback on view.html; team-code management on host setup page; no visual redesign (Phase 6) started, per instructions.

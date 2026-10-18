@@ -201,14 +201,24 @@
     if (els.soldBody) {
       clear(els.soldBody);
       if (state.sales.length === 0) {
-        els.soldBody.appendChild(el('tr', {}, [el('td', { colspan: '4', class: 'empty', text: 'No sales yet' })]));
+        els.soldBody.appendChild(el('tr', {}, [el('td', { colspan: '5', class: 'empty', text: 'No sales yet' })]));
       } else {
         state.sales.forEach(s => {
-          els.soldBody.appendChild(el('tr', {}, [
+          const corrected = s.status === 'corrected';
+          els.soldBody.appendChild(el('tr', { class: corrected ? 'corrected' : null }, [
             el('td', { text: s.playerName || '—' }),
             el('td', { text: state.players.find(p => p.id === s.playerId)?.category || '—' }),
             el('td', { text: s.teamName || '—' }),
             el('td', { text: money(s.price) }),
+            corrected
+              ? el('td', {}, [el('span', { class: 'tag tag-unsold', text: 'corrected' })])
+              : el('td', {}, [
+                  el('button', {
+                    type: 'button', class: 'btn btn-danger btn-small', text: 'Undo',
+                    title: 'Undo this sale: restore the budget and return the player to the pool',
+                    onclick: () => undoSale(s),
+                  }),
+                ]),
           ]));
         });
       }
@@ -283,6 +293,18 @@
       state = res.state;
       render();
       showMsg(`Player "${player.name}" removed.`, false);
+    } catch (err) { showMsg(messageOf(err)); }
+  }
+
+  // ---------- sale correction ----------
+  async function undoSale(sale) {
+    const player = state.players.find(p => p.id === sale.playerId);
+    if (!confirm(`Undo the sale of ${player ? player.name : 'this player'} to ${sale.teamName} for ${money(sale.price)}? The budget is restored and the player returns to the pool.`)) return;
+    try {
+      const res = await A.post(`/api/sales/${sale.id}/correct`, { confirm: true });
+      state = res.state;
+      render();
+      showMsg(`Sale of ${player ? player.name : 'player'} corrected; ${sale.teamName} budget restored.`, false);
     } catch (err) { showMsg(messageOf(err)); }
   }
 

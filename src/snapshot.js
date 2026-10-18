@@ -4,6 +4,7 @@
 function buildSnapshot(state) {
   const teamsById = new Map(state.teams.map(t => [t.id, t]));
   const playersById = new Map(state.players.map(p => [p.id, p]));
+  const active = state.sales.filter(s => s.status !== 'corrected');
 
   const current = state.auction.currentPlayerId
     ? playersById.get(state.auction.currentPlayerId) || null
@@ -15,7 +16,7 @@ function buildSnapshot(state) {
     status: t.status,
     initialBudget: t.initialBudget,
     remainingBudget: t.remainingBudget,
-    playersBought: state.sales
+    playersBought: active
       .filter(s => s.teamId === t.id)
       .map(s => {
         const p = playersById.get(s.playerId);
@@ -53,7 +54,7 @@ function buildSnapshot(state) {
   const unsold = state.players.filter(p => p.status === 'unsold');
   const available = state.players.filter(p => p.status === 'available');
   const inProgress = state.players.filter(p => p.status === 'in_progress');
-  const totalSpent = state.sales.reduce((sum, s) => sum + s.price, 0);
+  const totalSpent = active.reduce((sum, s) => sum + s.price, 0);
 
   return {
     sequence: state.auction.sequence,
@@ -99,7 +100,7 @@ function buildSnapshot(state) {
       availableCount: available.length,
       totalSpent,
       teams: state.teams.map(t => {
-        const purchases = state.sales.filter(s => s.teamId === t.id);
+        const purchases = active.filter(s => s.teamId === t.id);
         const spent = purchases.reduce((sum, s) => sum + s.price, 0);
         return {
           id: t.id,

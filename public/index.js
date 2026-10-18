@@ -14,8 +14,11 @@
   const reviewBtn = document.getElementById('review-btn');
   const incrementInput = document.getElementById('bid-increment');
   const legacyBtn = document.getElementById('legacy-import');
+  const codesReview = document.getElementById('codes-review');
+  const generateCodesBtn = document.getElementById('generate-codes');
 
   let state = null;
+  let codes = new Map(); // teamId -> { name, code } (host-only, never in public snapshots)
 
   function showMsg(text, isError = true) {
     msg.textContent = text;
@@ -110,7 +113,47 @@
     });
 
     loadReadiness();
+    renderCodes();
   }
+
+  function renderCodes() {
+    if (!codesReview) return;
+    clear(codesReview);
+    const teams = state ? state.teams.filter(t => t.status === 'active') : [];
+    if (teams.length === 0) {
+      codesReview.appendChild(el('p', { class: 'empty', text: 'No active teams yet.' }));
+      return;
+    }
+    teams.forEach(t => {
+      const entry = codes.get(t.id);
+      codesReview.appendChild(el('div', { class: 'review-item' }, [
+        el('div', { class: 'review-main' }, [
+          el('strong', { text: t.name }),
+          el('span', { class: 'review-meta', text: entry ? `code ${entry.code}` : 'no code yet' }),
+        ]),
+        el('button', {
+          type: 'button', class: 'btn btn-small', text: 'Rotate',
+          onclick: async () => {
+            try {
+              const res = await A.post(`/api/teams/${t.id}/participant-code`);
+              codes.set(t.id, { name: res.result.name, code: res.result.code });
+              renderCodes();
+              showMsg(`New code for "${t.name}": ${res.result.code}`, false);
+            } catch (err) { showMsg(messageOf(err)); }
+          },
+        }),
+      ]));
+    });
+  }
+
+  generateCodesBtn.addEventListener('click', async () => {
+    try {
+      const res = await A.post('/api/participant-codes');
+      res.result.forEach(r => codes.set(r.teamId, { name: r.name, code: r.code }));
+      renderCodes();
+      showMsg(`Codes ready for ${res.result.length} team(s).`, false);
+    } catch (err) { showMsg(messageOf(err)); }
+  });
 
   async function refresh() {
     state = await A.get('/api/state');

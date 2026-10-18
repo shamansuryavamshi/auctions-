@@ -14,11 +14,41 @@
   <h1>Sports Auction League</h1>
   <div class="header-bar">
     <span id="auction-status" class="status-badge">connecting…</span>
-    <span class="hint">Participant view — read only</span>
+    <span class="hint">Participant view</span>
   </div>
 </header>
 
 <main>
+  <!-- PARTICIPANT IDENTITY + BIDDING -->
+  <section id="join">
+    <h2>Your Team</h2>
+
+    <form id="join-form" autocomplete="off">
+      <label>
+        Team code (from the host):
+        <input type="text" id="join-code" placeholder="e.g. 3f9a1c2d" maxlength="16" required>
+      </label>
+      <button type="submit" class="btn btn-primary">Join as team</button>
+    </form>
+
+    <div id="team-panel" hidden>
+      <p class="team-line">
+        Joined as <strong id="joined-team">—</strong> ·
+        Remaining: <strong id="joined-budget">—</strong>
+      </p>
+      <form id="bid-form" autocomplete="off">
+        <label>
+          Your bid (₹):
+          <input type="number" id="bid-input" min="1" step="1" required>
+        </label>
+        <button type="submit" class="btn btn-success" id="bid-btn">Place bid</button>
+      </form>
+      <button type="button" id="leave-btn" class="btn">Leave team</button>
+    </div>
+
+    <p id="identity-msg" class="form-msg" hidden></p>
+  </section>
+
   <!-- CURRENT LOT -->
   <section id="lot">
     <h2>On the Block</h2>
@@ -30,6 +60,7 @@
         <p>Base price: <span id="lot-base">—</span></p>
         <p class="bid-line">Highest bid: <strong id="lot-bid">—</strong></p>
         <p>Leading team: <span id="lot-team">—</span></p>
+        <p id="bid-hint" class="hint"></p>
       </div>
     </article>
     <p id="view-msg" class="form-msg" hidden></p>

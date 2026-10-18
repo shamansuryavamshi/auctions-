@@ -5,7 +5,8 @@ const express = require('express');
 
 const { Store } = require('./store');
 const { SseHub } = require('./sse');
-const { createHostAuth } = require('./auth');
+const { createHostAuth, AttemptTracker } = require('./auth');
+const { SessionRegistry, createParticipantAuth } = require('./sessions');
 const { createApiRouter } = require('./routes/api');
 const { ApiError } = require('./errors');
 const { root } = require('./config');
@@ -32,11 +33,20 @@ async function createApp(config) {
 
   const { requireHost } = createHostAuth({ hostToken, auth: config.auth });
 
+  // Participant sessions live in memory only (documented limitation: a
+  // server restart invalidates them; participants re-join with their code).
+  const sessions = new SessionRegistry();
+  const requireParticipant = createParticipantAuth(sessions);
+  const codeTracker = new AttemptTracker({ maxFailures: 10, windowMs: 15 * 60 * 1000, lockMs: 15 * 60 * 1000 });
+
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '3mb' }));
 
-  app.use('/api', createApiRouter({ store, hub, requireHost, limits: { maxImageBytes: config.maxImageBytes } }));
+  app.use('/api', createApiRouter({
+    store, hub, requireHost, requireParticipant, sessions, codeTracker,
+    limits: { maxImageBytes: config.maxImageBytes },
+  }));
 
   app.use('/api', (req, res) => {
     res.status(404).json({ error: { code: 'not_found', message: 'Unknown API endpoint' } });
@@ -61,7 +71,7 @@ async function createApp(config) {
     res.status(500).json({ error: { code: 'internal_error', message: 'Internal server error' } });
   });
 
-  return { app, store, hub, hostToken, generated, initInfo };
+  return { app, store, hub, sessions, hostToken, generated, initInfo };
 }
 
 module.exports = { createApp };

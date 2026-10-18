@@ -37,7 +37,16 @@ Pages:
 
 ## Participant access
 
-`/view.html` is read-only by design: it only calls public GET endpoints and `/api/events`. Participants cannot reach any mutation (all guarded server-side — hiding buttons is not the mechanism).
+Participants join from `/view.html` with a **team code** (shown to the host on the setup page, generated per team, never present in public snapshots/SSE). The server exchanges a valid code for a random session token bound to that team; bids go to `POST /api/participant/bids` with that token. The team a bid is credited to is derived **only** server-side from the session — any `teamId` in the request body is ignored.
+
+- Sessions are in-memory only: a server restart invalidates them (participants simply re-join with their code). Sessions expire after ~12 hours.
+- Participant tokens are not host credentials: they cannot call any host endpoint, and host tokens cannot call participant endpoints.
+- Repeated wrong codes are rate limited per IP (10 per 15 minutes → 15-minute lock).
+- Participants still cannot reach any host mutation (all guarded server-side — hiding buttons is not the mechanism).
+
+### Sale correction (host)
+
+The host console's sold table has an **Undo** button per sale (`POST /api/sales/:id/correct { confirm: true }`): the sale is marked `corrected` (kept as audit history, excluded from stats/purchases), the winning team's budget is restored, and the player returns to the available pool so they re-enter the block on the next advance. Each sale can be corrected at most once (409 on a second attempt); corrections are safe during live, paused, and concluded auctions.
 
 ## Configuration (.env)
 
@@ -69,8 +78,18 @@ Host (require token):
 - `POST /api/auction/reset` `{ confirm: "RESET" }`
 - `POST /api/bids` `{ teamId, amount }`
 - `POST /api/sale` — atomic settlement of the current lot
+- `POST /api/sales/:id/correct` `{ confirm: true }` — undo a sale: restore budget, return player to the pool (once per sale)
 - `POST /api/players/:id/unsold` (current player only)
+- `POST /api/participant-codes` — ensure every active team has a code; returns `{ teamId, name, code }[]`
+- `POST /api/teams/:id/participant-code` — rotate a team's code
 - `POST /api/import-legacy` `{ teams, players }` — migrate old localStorage data
+
+Participant (require a participant session token):
+
+- `POST /api/participants/session` `{ code }` → `{ ok, token, team }` (rate limited on failures)
+- `GET /api/participants/me` → your team + current auction status
+- `POST /api/participants/logout` — revoke the session
+- `POST /api/participant/bids` `{ amount }` — bid as your team (identity comes from the session, never the body)
 
 Errors are JSON: `{ "error": { "code", "message", "details" } }` with proper statuses (400/401/403/404/409/413/429/500).
 
@@ -91,7 +110,7 @@ The original site kept teams/players in `localStorage`. Open the setup page, pre
 
 ## Tests
 
-`npm test` runs 59 tests covering: setup validation, empty-auction rejection, bid rules (base price, increment, affordability, paused/concluded states), duplicate & concurrent sale protection, single deduction, unsold handling, team-ID stability after removal/archival (P0 regression), ownership/category assignment, persistence across restart, corrupt-file recovery, authorization failures + rate limiting + token leakage checks, invalid payloads, SSE snapshots/updates/heartbeats, and final statistics.
+`npm test` runs 84 tests covering: setup validation, empty-auction rejection, bid rules (base price, increment, affordability, paused/concluded states), duplicate & concurrent sale protection, single deduction, unsold handling, team-ID stability after removal/archival (P0 regression), ownership/category assignment, persistence across restart, corrupt-file recovery, authorization failures + rate limiting + token leakage checks, invalid payloads, SSE snapshots/updates/heartbeats, final statistics, participant sessions/codes/brute-force lockout/spoofed-teamId bids/credential separation, and sale correction (budget restore, exactly-once under concurrency, re-entry, post-conclude).
 
 ## Project layout
 
@@ -104,6 +123,7 @@ src/services/auction.js   all auction rules (pure, unit-testable)
 src/routes/api.js    HTTP layer (validation → service → snapshot)
 src/sse.js           SSE hub (read-only broadcast)
 src/auth.js          host token check + brute-force guard
+src/sessions.js      participant session registry + guard (in-memory)
 src/snapshot.js      public snapshot builder (no credentials)
 public/              original pages + shared client
 test/                node:test suites

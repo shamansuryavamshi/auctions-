@@ -68,4 +68,4 @@ function createHostAuth({ hostToken, auth = {} }) {
   return { requireHost, tracker };
 }
 
-module.exports = { createHostAuth, tokenFromRequest, safeEqual };
+module.exports = { createHostAuth, tokenFromRequest, safeEqual, AttemptTracker };

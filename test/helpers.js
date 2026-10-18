@@ -49,18 +49,32 @@ async function startTestApp(options = {}) {
     }).then(parse);
   }
 
+  function participant(method, p, body, token) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['x-participant-token'] = token;
+    return fetch(base + p, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    }).then(parse);
+  }
+
   return {
     base,
     dataDir,
     config,
     store: created.store,
     hub: created.hub,
+    sessions: created.sessions,
     server,
     get,
     host,
     post: (p, body, token) => host('POST', p, body, token),
     patch: (p, body, token) => host('PATCH', p, body, token),
     del: (p, token) => host('DELETE', p, undefined, token),
+    participant,
+    ppost: (p, body, token) => participant('POST', p, body, token),
+    pget: (p, token) => participant('GET', p, undefined, token),
     async close() {
       if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
       await new Promise(resolve => server.close(resolve));
