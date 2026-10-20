@@ -3,3 +3,6 @@ data/
 .env
 *.log
 *.corrupt-*
+test-results/
+playwright-report/
+e2e/.data/

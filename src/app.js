@@ -41,6 +41,9 @@ async function createApp(config) {
 
   const app = express();
   app.disable('x-powered-by');
+  // Behind one reverse proxy (e.g. Railway), so req.ip reflects the real
+  // client from X-Forwarded-For; brute-force limits then apply per visitor.
+  app.set('trust proxy', 1);
   app.use(express.json({ limit: '3mb' }));
 
   app.use('/api', createApiRouter({

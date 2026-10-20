@@ -108,6 +108,29 @@ State lives in `data/auction.json` (versioned schema — see `DATA_MODEL.md`):
 
 The original site kept teams/players in `localStorage`. Open the setup page, press **"Import it now"** (shown automatically when legacy keys exist), then the keys are removed after a successful import. Or POST the payload yourself to `/api/import-legacy`.
 
+## Deploying to Railway
+
+This app is a long-running Node server (SSE + in-memory sessions), so it needs a
+process host — **not** a serverless platform (Vercel will fail with
+`FUNCTION_INVOCATION_FAILED`). Railway works out of the box:
+
+1. Push this repository to GitHub, then in [Railway](https://railway.app):
+   **New Project → Deploy from GitHub repo →** select the repository.
+   Railway auto-detects Node via `railway.json` (`npm start`, health check on `/api/health`).
+2. Under **Variables**, set:
+   - `HOST_TOKEN` — a long random secret; this unlocks the host setup page.
+   - `DATA_DIR=/data` — only if you add a volume (next step).
+3. *(Recommended)* **Settings → Volumes → Add Volume**, mount at `/data`.
+   Without a volume, auction data lives on the ephemeral container filesystem
+   and resets on every redeploy/restart. With the volume it survives.
+4. Open the generated `*.up.railway.app` URL. You land on the setup page; it
+   asks for the host token once (stored in that browser tab's session).
+
+Notes: the server listens on `0.0.0.0` using Railway's injected `PORT`, and sets
+`trust proxy` so the host-auth rate limiter counts per real visitor. Participant
+sessions are in-memory by design — a redeploy makes participants re-join with
+their team code (auction state itself is on disk and survives).
+
 ## Tests
 
 `npm test` runs 84 tests covering: setup validation, empty-auction rejection, bid rules (base price, increment, affordability, paused/concluded states), duplicate & concurrent sale protection, single deduction, unsold handling, team-ID stability after removal/archival (P0 regression), ownership/category assignment, persistence across restart, corrupt-file recovery, authorization failures + rate limiting + token leakage checks, invalid payloads, SSE snapshots/updates/heartbeats, final statistics, participant sessions/codes/brute-force lockout/spoofed-teamId bids/credential separation, and sale correction (budget restore, exactly-once under concurrency, re-entry, post-conclude).

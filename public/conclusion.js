@@ -61,10 +61,11 @@
     });
 
     clear(soldList);
-    if (state.sales.length === 0) {
+    const activeSales = state.sales.filter(sale => sale.status !== 'corrected');
+    if (activeSales.length === 0) {
       soldList.appendChild(el('tr', {}, [el('td', { colspan: '4', class: 'empty', text: 'No players were sold' })]));
     } else {
-      state.sales.forEach(sale => {
+      activeSales.forEach(sale => {
         const player = state.players.find(p => p.id === sale.playerId);
         soldList.appendChild(el('tr', {}, [
           el('td', { text: sale.playerName || '—' }),
@@ -73,6 +74,12 @@
           el('td', { text: money(sale.price) }),
         ]));
       });
+    }
+    const corrected = state.sales.filter(sale => sale.status === 'corrected');
+    if (corrected.length > 0) {
+      soldList.appendChild(el('tr', { class: 'corrected' }, [
+        el('td', { colspan: '4', class: 'hint', text: `${corrected.length} corrected sale(s) excluded from results` }),
+      ]));
     }
 
     clear(unsoldDiv);
