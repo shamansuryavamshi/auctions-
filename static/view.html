@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction — Participant View</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>Participant View</h1>
+    <p class="page-subtitle">Join with your team code and bid</p>
+  </header>
+
+  <main>
+    <!-- Join screen -->
+    <div id="join-screen" class="join-wrap" hidden>
+      <section class="card">
+        <h2>Join your team</h2>
+        <label class="field">
+          Team code:
+          <input type="text" id="join-code" placeholder="8-character code" maxlength="16" autocomplete="off">
+        </label>
+        <button type="button" id="join-btn" class="btn btn-primary btn-block">Join auction</button>
+        <p id="join-msg" class="form-msg" role="status"></p>
+        <p class="hint">Your host shared this code with you. Ask them if you don't have it.</p>
+      </section>
+    </div>
+
+    <!-- Auction screen -->
+    <div id="auction-screen" hidden>
+      <div class="topbar">
+        <span id="auction-status" class="status-badge setup">SETUP</span>
+        <button type="button" id="leave-btn" class="btn btn-small">Leave team</button>
+      </div>
+
+      <div class="my-team-banner">
+        <h3 id="team-name">—</h3>
+        <div class="budget" id="team-budget">—</div>
+        <div class="hint" id="team-roster"></div>
+      </div>
+
+      <section class="card">
+        <h2>On the block</h2>
+        <div id="lot-wrap"></div>
+        <div id="bid-area" style="margin-top:16px">
+          <div class="inline-form">
+            <div>
+              <label class="field">Your bid (₹):
+                <input type="number" id="bid-input" min="1" step="1">
+              </label>
+            </div>
+            <button type="button" id="bid-btn" class="btn btn-primary">Place bid</button>
+          </div>
+          <p id="bid-hint" class="hint"></p>
+          <p id="bid-msg" class="form-msg" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Recent bids</h2>
+        <div id="bids-list" class="log-list"></div>
+      </section>
+    </div>
+
+    <nav class="page-links">
+      <a href="index.html">Setup</a>
+      <a href="live.html">Live console</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </main>
+
+  <footer><p>Static edition — updates live across tabs on this browser · © 2026 Sports Auction Platform</p></footer>
+
+  <script src="shared.js"></script>
+  <script src="view.js"></script>
+</body>
+</html>

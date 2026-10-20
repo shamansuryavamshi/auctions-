@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction — Live Console</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>Live Console</h1>
+    <p class="page-subtitle">Host controls — run the auction from here</p>
+  </header>
+
+  <main>
+    <div class="topbar">
+      <span id="auction-status" class="status-badge setup">SETUP</span>
+      <span class="meta">Event #<span id="sequence">0</span></span>
+    </div>
+
+    <section class="card">
+      <h2>On the block</h2>
+      <div id="lot-wrap"></div>
+      <div class="controls" style="margin-top:16px">
+        <button type="button" id="sell-btn" class="btn btn-success">Sell to top bid</button>
+        <button type="button" id="unsold-btn" class="btn">Mark unsold</button>
+        <button type="button" id="pause-btn" class="btn">Pause / Resume</button>
+        <button type="button" id="end-btn" class="btn btn-danger">End auction</button>
+      </div>
+      <p id="live-msg" class="form-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="grid-2">
+      <section class="card">
+        <h2>Teams</h2>
+        <div id="teams-grid" class="team-grid"></div>
+      </section>
+
+      <section class="card">
+        <h2>Sales</h2>
+        <div id="sales-list" class="review-list"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Event log</h2>
+      <div id="log-list" class="log-list"></div>
+    </section>
+
+    <nav class="page-links">
+      <a href="index.html">Setup</a>
+      <a href="view.html">Participant view</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </main>
+
+  <footer><p>Static edition — open the participant page in another tab to bid · © 2026 Sports Auction Platform</p></footer>
+
+  <script src="shared.js"></script>
+  <script src="live.js"></script>
+</body>
+</html>

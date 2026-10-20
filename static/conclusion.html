@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction — Conclusion</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>Auction Conclusion</h1>
+    <p class="page-subtitle">Final standings, sales and statistics</p>
+  </header>
+
+  <main>
+    <div class="topbar">
+      <span id="auction-status" class="status-badge setup">SETUP</span>
+      <button type="button" id="export-btn" class="btn btn-small">Export results JSON</button>
+    </div>
+
+    <div id="stat-grid" class="stat-grid"></div>
+
+    <section class="card">
+      <h2>Team standings</h2>
+      <div id="standings"></div>
+    </section>
+
+    <section class="card">
+      <h2>Sold players</h2>
+      <div id="sold-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Unsold players</h2>
+      <div id="unsold-list" class="review-list"></div>
+    </section>
+
+    <nav class="page-links">
+      <a href="index.html">Setup</a>
+      <a href="live.html">Live console</a>
+      <a href="view.html">Participant view</a>
+    </nav>
+  </main>
+
+  <footer><p>Static edition — © 2026 Sports Auction Platform</p></footer>
+
+  <script src="shared.js"></script>
+  <script src="conclusion.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Auction — Setup</title>
+  <link rel="stylesheet" href="shared.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <h1>Sports Auction League</h1>
+    <p class="page-subtitle">Host setup — teams, players, and auction rules</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2><span class="step">1</span> Auction rules</h2>
+      <label class="field">
+        Bid increment (₹ per bid):
+        <input type="number" id="bid-increment" min="1" step="1" placeholder="e.g. 10">
+      </label>
+      <button type="button" id="save-config" class="btn">Save increment</button>
+      <p id="setup-msg" class="form-msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <h2><span class="step">2</span> Teams</h2>
+      <div class="inline-form">
+        <div>
+          <label class="field">Team name:<input type="text" id="team-name" placeholder="Team Name" maxlength="80"></label>
+        </div>
+        <div>
+          <label class="field">Starting budget:<input type="number" id="team-budget" placeholder="100" min="1" step="1"></label>
+        </div>
+        <button type="button" id="add-team" class="btn btn-primary">Add Team</button>
+      </div>
+
+      <h3 class="subheading">Teams (<span id="team-count">0</span>)</h3>
+      <div id="teams-review" class="review-list"></div>
+
+      <h3 class="subheading">Participant team codes</h3>
+      <p class="hint">Share a team's code with that team's manager so they can join from the participant page and bid. Codes are shown here on the host page only.</p>
+      <button type="button" id="generate-codes" class="btn">Generate missing codes</button>
+      <div id="codes-review" class="review-list" style="margin-top:12px"></div>
+    </section>
+
+    <section class="card">
+      <h2><span class="step">3</span> Players</h2>
+      <div class="inline-form">
+        <div>
+          <label class="field">Player name:<input type="text" id="player-name" placeholder="Player Name" maxlength="80"></label>
+        </div>
+        <div>
+          <label class="field">Category:
+            <select id="player-category">
+              <option value="">Select Category</option>
+              <option value="Batsman">Batsman</option>
+              <option value="Bowler">Bowler</option>
+              <option value="All-Rounder">All-Rounder</option>
+              <option value="Wicket-Keeper">Wicket Keeper</option>
+            </select>
+          </label>
+        </div>
+        <div>
+          <label class="field">Base price (₹):<input type="number" id="player-base" min="0" step="1" placeholder="0"></label>
+        </div>
+        <button type="button" id="add-player" class="btn btn-primary">Add Player</button>
+      </div>
+      <label class="field">Player photo (optional, resized automatically):
+        <input type="file" id="player-image" accept="image/*">
+      </label>
+      <img id="image-preview" class="preview" alt="" hidden>
+
+      <h3 class="subheading">Players (<span id="player-count">0</span>)</h3>
+      <div id="players-review" class="review-list"></div>
+    </section>
+
+    <section class="card">
+      <h2><span class="step">4</span> Start auction</h2>
+      <div id="readiness" class="readiness not-ready">Checking setup…</div>
+      <button type="button" id="review-btn" class="btn btn-success btn-block" disabled>Review &amp; Start Auction</button>
+    </section>
+
+    <section class="card danger-zone">
+      <h2>Data</h2>
+      <p class="hint">Everything lives in this browser's storage. Export a backup before resetting, and remember: other devices do not share this state.</p>
+      <div class="controls">
+        <button type="button" id="export-btn" class="btn">Export JSON</button>
+        <button type="button" id="import-btn" class="btn">Import JSON</button>
+        <button type="button" id="reset-btn" class="btn btn-danger">Reset everything</button>
+      </div>
+      <input type="file" id="import-file" accept="application/json" hidden>
+    </section>
+
+    <nav class="page-links">
+      <a href="live.html">Live console</a>
+      <a href="view.html">Participant view</a>
+      <a href="conclusion.html">Conclusion</a>
+    </nav>
+  </main>
+
+  <footer><p>Static edition — data stored locally in this browser · © 2026 Sports Auction Platform</p></footer>
+
+  <script src="shared.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
